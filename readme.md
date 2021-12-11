@@ -1,4 +1,5 @@
-#Secret detector for Dead Cells
+# Secret detector for Dead Cells
+
 Real-time detection of barely-seen secrets in Dead Cells
 
 Based on OpenCV
