@@ -27,15 +27,15 @@ def capture(window_name: str = None,
         wDC = win32gui.GetWindowDC(hwnd)
         dcObj = win32ui.CreateDCFromHandle(wDC)
         cDC = dcObj.CreateCompatibleDC()
+        bmp = win32ui.CreateBitmap()
+        bmp.CreateCompatibleBitmap(dcObj, w, h)
+        cDC.SelectObject(bmp)
         while True:
             if print_fps:
                 t1 = time.perf_counter()
                 print(1 / (t1 - t))
                 t = t1
 
-            bmp = win32ui.CreateBitmap()
-            bmp.CreateCompatibleBitmap(dcObj, w, h)
-            cDC.SelectObject(bmp)
             cDC.BitBlt(
                 (0, 0),
                 (w, h),  # width, height
@@ -57,11 +57,15 @@ def capture(window_name: str = None,
 
     finally:
         # Free Resources
-        if dcObj:
-            dcObj.DeleteDC()
-        if cDC:
-            cDC.DeleteDC()
-        if hwnd and wDC:
-            win32gui.ReleaseDC(hwnd, wDC)
-        if bmp:
-            win32gui.DeleteObject(bmp.GetHandle())
+        for dc in [dcObj, cDC]:
+            if dc:
+                try:
+                    dc.DeleteDC()
+                except Exception:
+                    pass
+        try:
+            if hwnd and wDC:
+                win32gui.ReleaseDC(hwnd, wDC)
+        finally:
+            if bmp:
+                win32gui.DeleteObject(bmp.GetHandle())
