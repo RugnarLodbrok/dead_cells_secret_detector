@@ -1,8 +1,11 @@
 import os
+import sys
 from time import time, sleep
 
 import cv2 as cv
 import pygame
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from src.capturer import capture
 from src.matcher import Matcher
